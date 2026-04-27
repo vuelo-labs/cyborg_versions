@@ -68,7 +68,7 @@ docker run -d \
   --name "$CONTAINER" \
   -e CANDIDATE_TOKEN="$TOKEN" \
   -e DEADLINE="${VERALUX_DEADLINE:-2026-05-03T17:00:00Z}" \
-  -e SUBMISSION_ENDPOINT="${VERALUX_ENDPOINT:-https://submit.veralux.io/submit}" \
+  -e SUBMISSION_ENDPOINT="${VERALUX_ENDPOINT:-https://linguist.vuelolabs.com/cyborg/submit}" \
   -p "${WEB_PORT}:3000" \
   -p "${SSH_PORT}:2222" \
   "$IMAGE"
