@@ -1,6 +1,6 @@
 #!/bin/bash
 # Veralux Analytics — workspace installer
-# Usage: bash install.sh YOUR_TOKEN
+# Usage: curl -fsSL https://raw.githubusercontent.com/vuelo-labs/cyborg_versions/main/install.sh | bash -s YOUR_TOKEN
 
 set -e
 
