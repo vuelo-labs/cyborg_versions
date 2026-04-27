@@ -60,17 +60,6 @@ echo -e "${BOLD}Pulling workspace image…${NC}"
 echo "(This may take a minute on first run)"
 docker pull "$IMAGE"
 
-# ── Check for Claude credentials ─────────────────────────────────────────────
-CLAUDE_MOUNT=""
-if [ -d "$HOME/.claude" ]; then
-  CLAUDE_MOUNT="-v $HOME/.claude:/home/candidate/.claude:ro"
-  echo -e "${GREEN}Claude credentials found — mounting into workspace.${NC}"
-else
-  echo -e "${YELLOW}No Claude credentials found.${NC}"
-  echo "  To use Claude Code in the workspace, run 'claude' on your machine first to log in,"
-  echo "  then re-run this installer."
-  echo ""
-fi
 
 # ── Start container ───────────────────────────────────────────────────────────
 echo ""
@@ -83,7 +72,7 @@ docker run -d \
   -e SUBMISSION_ENDPOINT="${VERALUX_ENDPOINT:-https://linguist.vuelolabs.com/cyborg/submit}" \
   -p "${WEB_PORT}:3000" \
   -p "${SSH_PORT}:2222" \
-  $CLAUDE_MOUNT \
+  -p "54545:54545" \
   "$IMAGE"
 
 # ── Wait for web app ──────────────────────────────────────────────────────────
