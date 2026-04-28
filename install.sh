@@ -35,15 +35,51 @@ fi
 echo ""
 echo -e "${BOLD}Checking Docker…${NC}"
 if ! command -v docker &>/dev/null; then
-  echo -e "${RED}Docker not found.${NC}"
-  echo "Install Docker Desktop from https://www.docker.com/products/docker-desktop"
-  exit 1
+  echo -e "${YELLOW}Docker not found.${NC}"
+  echo ""
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    echo "Installing Docker Desktop for Mac…"
+    echo "This will download and open the installer. Follow the prompts."
+    echo ""
+    curl -fsSL -o /tmp/Docker.dmg "https://desktop.docker.com/mac/main/$(uname -m)/Docker.dmg"
+    hdiutil attach /tmp/Docker.dmg -quiet
+    cp -R "/Volumes/Docker/Docker.app" /Applications/ 2>/dev/null || {
+      echo -e "${RED}Could not copy to Applications. Try dragging Docker.app manually.${NC}"
+      open "/Volumes/Docker"
+    }
+    hdiutil detach "/Volumes/Docker" -quiet 2>/dev/null
+    rm -f /tmp/Docker.dmg
+    echo ""
+    echo -e "${BOLD}Opening Docker Desktop — wait for it to start, then re-run this script.${NC}"
+    open -a Docker
+    exit 0
+  else
+    echo "Install Docker Desktop from https://www.docker.com/products/docker-desktop"
+    echo "Then re-run this script."
+    exit 1
+  fi
 fi
 
 if ! docker info &>/dev/null; then
-  echo -e "${RED}Docker is installed but not running.${NC}"
-  echo "Start Docker Desktop and try again."
-  exit 1
+  echo -e "${YELLOW}Docker is installed but not running.${NC}"
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    echo "Starting Docker Desktop…"
+    open -a Docker
+    printf "Waiting for Docker to start"
+    for i in $(seq 1 30); do
+      if docker info &>/dev/null; then break; fi
+      printf "."
+      sleep 2
+    done
+    echo ""
+    if ! docker info &>/dev/null; then
+      echo -e "${RED}Docker didn't start in time. Open Docker Desktop manually and try again.${NC}"
+      exit 1
+    fi
+  else
+    echo "Start Docker Desktop and try again."
+    exit 1
+  fi
 fi
 
 echo -e "${GREEN}Docker is running.${NC}"
