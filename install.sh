@@ -22,7 +22,7 @@ if [ -z "$TOKEN" ]; then
   echo -e "${BOLD}Veralux Analytics — Workspace Setup${NC}"
   echo ""
   printf "Enter your candidate token: "
-  read -r TOKEN
+  read -r TOKEN < /dev/tty
 fi
 
 if [ -z "$TOKEN" ]; then
@@ -36,7 +36,7 @@ echo -e "${BOLD}Anthropic API Key (for Claude Code)${NC}"
 echo "Get one at https://console.anthropic.com"
 echo ""
 printf "Enter your Anthropic API key (or press Enter to skip): "
-read -r API_KEY
+read -r API_KEY < /dev/tty
 
 if [ -z "$API_KEY" ]; then
   echo -e "${YELLOW}Skipped — Claude Code won't be available inside the workspace.${NC}"
