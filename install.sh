@@ -30,6 +30,42 @@ if [ -z "$TOKEN" ]; then
   exit 1
 fi
 
+# ── Validate token before pulling the image ──────────────────────────────────
+VALIDATE_URL="${VERALUX_VALIDATE_URL:-https://linguist.vuelolabs.com/cyborg/validate}"
+echo ""
+echo -e "${BOLD}Validating token…${NC}"
+VALIDATE_RESP=$(curl -fsS --max-time 10 -X POST "$VALIDATE_URL" \
+  -H 'Content-Type: application/json' \
+  -d "{\"token\":\"${TOKEN}\"}" 2>/dev/null || true)
+
+case "$VALIDATE_RESP" in
+  *'"ok":true'*)
+    echo -e "${GREEN}Token accepted.${NC}"
+    ;;
+  *'"reason":"already_used"'*)
+    echo -e "${RED}This token has already been used.${NC}"
+    echo "Each candidate token is single-use. Contact the assessment owner if you believe this is an error."
+    exit 1
+    ;;
+  *'"reason":"expired"'*)
+    echo -e "${RED}This token has expired.${NC}"
+    exit 1
+    ;;
+  *'"reason":"revoked"'*)
+    echo -e "${RED}This token has been revoked.${NC}"
+    exit 1
+    ;;
+  *'"reason":"unknown"'*)
+    echo -e "${RED}Token not recognised.${NC}"
+    echo "Double-check the token you were issued."
+    exit 1
+    ;;
+  *)
+    echo -e "${YELLOW}Could not reach the validation server — continuing anyway.${NC}"
+    echo "(The submission step will re-validate the token.)"
+    ;;
+esac
+
 
 # ── Check Docker ──────────────────────────────────────────────────────────────
 echo ""
