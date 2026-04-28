@@ -106,12 +106,15 @@ DOCKER_ARGS=(
   -d
   --name "$CONTAINER"
   -e CANDIDATE_TOKEN="$TOKEN"
-  -e DEADLINE="${VERALUX_DEADLINE:-2026-05-03T17:00:00Z}"
   -e SUBMISSION_ENDPOINT="${VERALUX_ENDPOINT:-https://linguist.vuelolabs.com/cyborg/submit}"
   -p "${WEB_PORT}:3000"
   -p "${SSH_PORT}:2222"
   -p "54545:54545"
 )
+# If VERALUX_DEADLINE is set, override the default 7-day window.
+if [ -n "${VERALUX_DEADLINE:-}" ]; then
+  DOCKER_ARGS+=(-e DEADLINE="${VERALUX_DEADLINE}")
+fi
 
 docker run "${DOCKER_ARGS[@]}" "$IMAGE"
 
