@@ -30,20 +30,6 @@ if [ -z "$TOKEN" ]; then
   exit 1
 fi
 
-# ── API Key ──────────────────────────────────────────────────────────────────
-echo ""
-echo -e "${BOLD}Anthropic API Key (for Claude Code)${NC}"
-echo "Get one at https://console.anthropic.com"
-echo ""
-printf "Enter your Anthropic API key (or press Enter to skip): "
-read -r API_KEY < /dev/tty
-
-if [ -z "$API_KEY" ]; then
-  echo -e "${YELLOW}Skipped — Claude Code won't be available inside the workspace.${NC}"
-  echo "You can still use Claude Code or Cursor via SSH from your host machine."
-else
-  echo -e "${GREEN}API key set — Claude Code will be available inside the workspace.${NC}"
-fi
 
 # ── Check Docker ──────────────────────────────────────────────────────────────
 echo ""
@@ -90,10 +76,6 @@ DOCKER_ARGS=(
   -p "${SSH_PORT}:2222"
   -p "54545:54545"
 )
-
-if [ -n "$API_KEY" ]; then
-  DOCKER_ARGS+=(-e ANTHROPIC_API_KEY="$API_KEY")
-fi
 
 docker run "${DOCKER_ARGS[@]}" "$IMAGE"
 
