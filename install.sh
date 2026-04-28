@@ -60,6 +60,11 @@ case "$VALIDATE_RESP" in
     echo "Double-check the token you were issued."
     exit 1
     ;;
+  *'"reason":"pending_approval"'*)
+    echo -e "${YELLOW}Your request is still pending approval.${NC}"
+    echo "You'll receive an email when it's ready to install."
+    exit 1
+    ;;
   *)
     echo -e "${YELLOW}Could not reach the validation server — continuing anyway.${NC}"
     echo "(The submission step will re-validate the token.)"
